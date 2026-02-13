@@ -53,7 +53,7 @@ def render_g_panel(pil_img: Image.Image, title: str):
     x = pil_to_tensor(pil_img)
 
     # Input
-    st.image(pil_img, caption=f"{title}: input", width='stretch')
+    st.image(pil_img, caption=f"{title}: input", use_container_width=True)
 
     # Predictions
     preds = predict_topk(model, x, k=topk)
@@ -64,7 +64,7 @@ def render_g_panel(pil_img: Image.Image, title: str):
     st.write(f"Grad-CAM (target: {layer_name})")
     try:
         cam_img = gradcam_overlay(model, x, pil_img, layer)
-        st.image(cam_img, caption=f"{title}: Grad-CAM on {layer_name}", width='stretch')
+        st.image(cam_img, caption=f"{title}: Grad-CAM on {layer_name}", use_container_width=True)
     except Exception as e:
         st.error(f"Grad-CAM failed: {e}")
 
@@ -165,7 +165,7 @@ This tab implements gradient ascent directly and lets you produce **multiple act
             )
         c1, c2 = st.columns([1, 1])
         with c1:
-            st.image(out_img, caption=f"{layer_name} — channel {ch}", width='stretch')
+            st.image(out_img, caption=f"{layer_name} — channel {ch}", use_container_width=True)
         with c2:
             st.write("Objective history (last 10 values):")
             st.json(hist[-10:])
@@ -208,4 +208,4 @@ This tab implements gradient ascent directly and lets you produce **multiple act
         r2c1, r2c2 = st.columns(2)
         for col, (cidx, im) in zip([r1c1, r1c2, r2c1, r2c2], imgs):
             with col:
-                st.image(im, caption=f"{layer_name} — channel {cidx}", width='stretch')
+                st.image(im, caption=f"{layer_name} — channel {cidx}", use_container_width=True)

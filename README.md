@@ -4,7 +4,7 @@
 `pip install -r requirements.txt`
 
 ### To run webapp
-`stream run app.py`
+`streamlit run app.py`
 
 ### Analysis
 
