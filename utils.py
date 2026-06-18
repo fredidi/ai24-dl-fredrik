@@ -1,4 +1,3 @@
-# utils.py
 import numpy as np
 import torch
 import torch.nn as nn
@@ -11,7 +10,6 @@ from torchcam.utils import overlay_mask
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 DTYPE = torch.float32
 
-# ImageNet preprocessing
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 
@@ -87,26 +85,22 @@ def activation_channel(act, ch):
 def gradcam_overlay(model, x, pil_img, layer, class_idx=None):
     cam = GradCAM(model, target_layer=layer)
 
-    # IMPORTANT: do NOT use torch.no_grad() here
     model.zero_grad(set_to_none=True)
     logits = model(x)
 
     if class_idx is None:
         class_idx = int(logits.argmax(dim=1).item())
 
-    cam_map = cam(class_idx, logits)[0]   # torch tensor
+    cam_map = cam(class_idx, logits)[0]
 
-    # Ensure cam_map is (H, W)
     if cam_map.dim() == 3:
         cam_map = cam_map.squeeze(0)
 
-    # Resize base image to CAM size (W, H)
     h, w = int(cam_map.shape[-2]), int(cam_map.shape[-1])
     base = pil_img.resize((w, h))
 
     out = overlay_mask(base, to_pil(cam_map.detach().cpu()), alpha=0.5)
 
-    # CRITICAL: remove torchcam hooks so later no_grad passes don't crash
     cam.remove_hooks()
 
     return out

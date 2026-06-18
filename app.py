@@ -1,4 +1,3 @@
-# app.py
 import streamlit as st
 from PIL import Image
 import torch
@@ -25,7 +24,6 @@ layers = {
 }
 
 
-# Sidebar: Two image slots
 st.sidebar.header("Inputs - Image Slots")
 up_a = st.sidebar.file_uploader("Upload Image A", type=["jpg", "png", "jpeg"], key="upload_a")
 up_b = st.sidebar.file_uploader("Upload Image B", type=["jpg", "png", "jpeg"], key="upload_b")
@@ -37,7 +35,6 @@ layer = layers[layer_name]
 st.sidebar.divider()
 topk = st.sidebar.slider("Top-k predictions", 1, 10, 5)
 
-# Load images (if present)
 img_a = Image.open(up_a).convert("RGB") if up_a else None
 img_b = Image.open(up_b).convert("RGB") if up_b else None
 
@@ -52,15 +49,12 @@ def render_g_panel(pil_img: Image.Image, title: str):
 
     x = pil_to_tensor(pil_img)
 
-    # Input
     st.image(pil_img, caption=f"{title}: input", use_container_width=True)
 
-    # Predictions
     preds = predict_topk(model, x, k=topk)
     st.write("Top-k predictions (class index, probability):")
     st.json(preds)
 
-    # CAM
     st.write(f"Grad-CAM (target: {layer_name})")
     try:
         cam_img = gradcam_overlay(model, x, pil_img, layer)
@@ -183,7 +177,6 @@ This tab implements gradient ascent directly and lets you produce **multiple act
     else:
         ch_list = [int(x.strip()) for x in preset.split(",")]
 
-    # sanitize
     ch_list = [c for c in ch_list if 0 <= c < ch_count]
     while len(ch_list) < 4:
         ch_list.append(0)
